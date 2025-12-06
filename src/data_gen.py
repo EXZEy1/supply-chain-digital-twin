@@ -36,13 +36,17 @@ def generate_sales_data(days=365):
 
 # Main execution block
 if __name__ == "__main__":
-    # Ensure data directory exists
-    os.makedirs('../data', exist_ok=True)
+    current_dir = os.path.dirname(os.path.abspath(__file__))
     
+    project_root = os.path.dirname(current_dir)
+    data_dir = os.path.join(project_root, 'data')
+    os.makedirs(data_dir, exist_ok=True)
+    
+    # create sales data
     df = generate_sales_data()
     
-    # Save generated data to CSV
-    output_path = '../data/sales_history.csv'
+    # Save to CSV
+    output_path = os.path.join(data_dir, 'sales_history.csv')
     df.to_csv(output_path, index=False)
     
     print(f"Sales data generated successfully: {output_path}")
