@@ -46,6 +46,14 @@ if df_forecast is None:
 # --- 3. Sidebar (Control Panel) ---
 st.sidebar.header("Configuration")
 
+def format_date_label(date_str):
+    """Convert 'YYYY-MM-DD' string to 'YYYY-MM-DD (DayName)'"""
+    try:
+        dt = pd.to_datetime(date_str)
+        return dt.strftime('%Y-%m-%d (%A)') # %A gives full weekday name (e.g., Monday)
+    except:
+        return date_str
+
 # Select Target Date
 available_dates = df_forecast['Date'].unique()
 selected_date = st.sidebar.selectbox("Select Target Date:", available_dates)
