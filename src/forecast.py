@@ -2,7 +2,7 @@ import pandas as pd
 from prophet import Prophet
 import os
 
-def train_forecast_model(df, store_name, days_ahead=7):
+def train_forecast_model(df, store_name, days_ahead=30):
     """
     Train a time-series forecasting model for a specific store using Prophet.
     """
@@ -20,11 +20,11 @@ def train_forecast_model(df, store_name, days_ahead=7):
     
     # Extract predictions for the next 'days_ahead' days
     # 'yhat' is the predicted value
-    next_7_days = forecast.tail(days_ahead)[['ds', 'yhat']].copy()
-    next_7_days['Store'] = store_name
-    next_7_days.rename(columns={'ds': 'Date', 'yhat': 'Predicted_Demand'}, inplace=True)
+    next_30_days = forecast.tail(days_ahead)[['ds', 'yhat']].copy()
+    next_30_days['Store'] = store_name
+    next_30_days.rename(columns={'ds': 'Date', 'yhat': 'Predicted_Demand'}, inplace=True)
     
-    return next_7_days
+    return next_30_days
 
 # Main execution block
 if __name__ == "__main__":
