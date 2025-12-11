@@ -3,9 +3,9 @@ import numpy as np
 from datetime import datetime, timedelta
 import os
 
-def generate_sales_data(days=365):
+def generate_sales_data(days=730):
     """
-    Simulate sales data for 5 stores over a period of 1 year.
+    Simulate sales data for 5 stores over a period of 2 year.
     Each store will have different demand patterns.
     """
     np.random.seed(42)  # Ensure reproducibility
