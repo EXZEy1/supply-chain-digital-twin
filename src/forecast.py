@@ -2,6 +2,23 @@ import pandas as pd
 from prophet import Prophet
 import os
 
+# Custom holiday/events for better forecasting
+def get_special_events(dates):
+    events = []
+    for date in dates:
+        event_name = None
+        # Payday
+        if 25 <= date.day <= 31:
+            event_name = 'Payday'
+        # Double Day
+        if date.day == date.month:
+            event_name = 'DoubleDay'
+            
+        if event_name:
+            events.append([date, event_name])
+            
+    return pd.DataFrame(events, columns=['ds', 'holiday'])
+
 def train_forecast_model(df, store_name, days_ahead=30):
     """
     Train a time-series forecasting model for a specific store using Prophet.
@@ -9,9 +26,14 @@ def train_forecast_model(df, store_name, days_ahead=30):
     # Prophet requires specific column names: 'ds' (Date) and 'y' (Target value)
     store_data = df[df['Store'] == store_name].rename(columns={'Date': 'ds', 'Sales': 'y'})
     
+    # Get special events in the data
+    unique_dates = pd.to_datetime(store_data['ds'].unique())
+    special_events_df = get_special_events(unique_dates)
+
     # Initialize and train the Prophet model
     # daily_seasonality=True helps capture daily patterns automatically
-    model = Prophet(daily_seasonality=True)
+    model = Prophet(daily_seasonality=True, holidays=special_events_df)
+    model.add_country_holidays(country_name='TH')
     model.fit(store_data)
     
     # Create a dataframe to hold future dates for prediction
