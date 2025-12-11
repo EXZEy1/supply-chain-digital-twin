@@ -3,6 +3,20 @@ from sqlalchemy import create_engine
 import os
 import streamlit as st
 
+# Function to get DB connection URL
+def get_db_connection_url():
+    # 1. ลองดึงจาก st.secrets (สำหรับรันในเครื่อง Local)
+    try:
+        return st.secrets["connections"]["supabase"]["url"]
+    except (FileNotFoundError, KeyError):
+        pass # Maybe run in GitHub Actions?
+
+    # 2. try to get from Environment Variables (GitHub Actions)
+    url = os.environ.get("SUPABASE_URL")
+    if url:
+        return url
+    
+    raise ValueError("Database connection URL not found in st.secrets or Environment Variables.")
 
 # 1. Load local CSV files
 current_dir = os.path.dirname(os.path.abspath(__file__))
