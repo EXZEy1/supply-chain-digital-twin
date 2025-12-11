@@ -101,7 +101,7 @@ shipping_costs = {
 # Tab Layout
 tab1, tab2, tab3 = st.tabs(["Historical Data", "Market Forecast", "Optimization Engine"])
 with tab1:
-    st.subheader("Historical Sales Data")
+    st.subheader("Last 30-Day Historical Sales Data")
     
     all_stores_history = df_history['Store'].unique()
     
