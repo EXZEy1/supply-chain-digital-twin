@@ -28,12 +28,13 @@ def generate_sales_data(days=730):
             # Example: Weekend sales (Fri, Sat, Sun) receive a 20% boost
             weekday_factor = 1.2 if date.weekday() >= 5 else 0.9 
             # Payday
+            factor = 1.0
             if 25 <= date.day <= 31:
                 factor *= 1.3  
             
             # Double Days (1.1, 2.2, ... 12.12)
             if date.day == date.month:
-                factor *= 2.5  # ยอดขายพุ่ง 2.5 เท่า!! (11.11 แรงมาก)
+                factor *= 2.5  
                 
             # Black Friday
             if date.month == 11 and 24 <= date.day <= 30 and date.weekday() == 4:
