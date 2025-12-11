@@ -255,7 +255,7 @@ with tab3:
         )
         
         fig_bar = px.bar(plot_data, x='Store', y='Units', color='Type', barmode='group',
-                         color_discrete_map={'Predicted_Demand': 'lightgray', 'Allocated_Qty': 'green'},
+                         color_discrete_map={'Predicted_Demand': 'lightgray', 'Allocated_Qty': '#CE3D3D'},
                          title="Demand Fulfillment Analysis")
         
         st.plotly_chart(fig_bar, use_container_width=True)
