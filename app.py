@@ -20,27 +20,29 @@ st.title("Supply Chain Digital Twin & Optimization")
 st.markdown("### Intelligent Inventory Management & Scenario Simulation System")
 
 # --- 2. Load Data ---
-@st.cache_data # Cache data to prevent reloading on every interaction
+@st.cache_data(ttl=600) # cache data for 10 minutes
 def load_data():
-    # Automatically locate data directory
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    data_dir = os.path.join(current_dir, 'data')
-    
-    forecast_path = os.path.join(data_dir, 'forecast_results.csv')
-    history_path = os.path.join(data_dir, 'sales_history.csv')
-    
-    # Check if files exist
-    if not os.path.exists(forecast_path) or not os.path.exists(history_path):
-        return None, None
+    try:
+        # Setup connection to Supabase
+        conn = st.connection("supabase", type="sql")
         
-    df_forecast = pd.read_csv(forecast_path)
-    df_history = pd.read_csv(history_path)
-    return df_forecast, df_history
+        # Query data from tables
+        df_forecast = conn.query("SELECT * FROM forecast_results;", ttl=0)
+        df_history = conn.query("SELECT * FROM sales_history;", ttl=0)
+        
+        # Ensure Date columns are in datetime format
+        df_forecast['Date'] = pd.to_datetime(df_forecast['Date'])
+        df_history['Date'] = pd.to_datetime(df_history['Date'])
+        
+        return df_forecast, df_history
+        
+    except Exception as e:
+        st.error(f" Error loading data from database: {e}")
+        return None, None
 
 df_forecast, df_history = load_data()
 
 if df_forecast is None:
-    st.error("Data not found! Please run `src/data_gen.py` and `src/forecast.py` first.")
     st.stop()
 
 # --- 3. Sidebar (Control Panel) ---
