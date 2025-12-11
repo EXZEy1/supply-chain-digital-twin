@@ -32,8 +32,11 @@ except FileNotFoundError:
     exit()
 
 # 2. connect to Cloud Database
-conn_str = st.secrets["connections"]["supabase"]["url"]
-engine = create_engine(conn_str)
+conn_str = get_db_connection_url()
+engine = create_engine(
+    conn_str,
+    connect_args={'prepare_threshold': None} 
+)
 
 print("Connected to Cloud Database successfully.")
 
