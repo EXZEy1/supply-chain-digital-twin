@@ -43,7 +43,7 @@ def generate_sales_data(days=730):
             noise = np.random.normal(0, 10)  # Add random fluctuation
             
             # Calculate daily demand and ensure it's non-negative
-            demand = int((base_demand * weekday_factor) + noise)
+            demand = int((base_demand * weekday_factor * factor) + noise)
             demand = max(0, demand) 
             
             data.append([date, store, demand])
