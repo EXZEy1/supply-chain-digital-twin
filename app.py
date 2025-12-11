@@ -82,14 +82,17 @@ st.sidebar.subheader("Shipping Costs (THB/Unit)")
 
 # Adjust shipping costs dynamically
 cost_a = st.sidebar.number_input("Store_A (Furthest)", value=15)
+cost_b = st.sidebar.number_input("Store_B", value=10)
+cost_c = st.sidebar.number_input("Store_C", value=12)
+cost_d = st.sidebar.number_input("Store_D", value=8)
 cost_e = st.sidebar.number_input("Store_E (Closest)", value=5)
 
-# Create cost dictionary (Assumed values for others)
+# Create cost dictionary
 shipping_costs = {
     'Store_A': cost_a,
-    'Store_B': 10,
-    'Store_C': 12,
-    'Store_D': 8,
+    'Store_B': cost_b,
+    'Store_C': cost_c,
+    'Store_D': cost_d,
     'Store_E': cost_e
 }
 
