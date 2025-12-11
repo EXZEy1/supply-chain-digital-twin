@@ -107,11 +107,19 @@ with tab1:
 
     # Ensure 'Date' column is datetime
     df_history['Date'] = pd.to_datetime(df_history['Date'])
+
+    # Determine min and max dates for default range
+    min_date = df_history['Date'].min()
+    max_date = df_history['Date'].max()
+    default_start_30d = max_date - pd.Timedelta(days=30)
+
+    # Function to reset date range to last 30 days
+    def reset_date_range():
+        st.session_state.hist_date_range = (default_start_30d, max_date)
     
-    col_filter, col_date = st.columns(2)
+    col_filter, col_date, col_btn = st.columns([3, 2, 1])
 
     all_stores_history = df_history['Store'].unique()
-
     
     with col_filter:
         all_stores_history = df_history['Store'].unique()
@@ -138,6 +146,11 @@ with tab1:
             max_value=max_date,              
             key="hist_date_range"
         )
+        with col_btn:
+            st.write("") 
+            st.write("") 
+            # Call reset function on button click
+            st.button("↺ Last 30 Days", on_click=reset_date_range, help="Reset to latest 30 days")
 
     
 
