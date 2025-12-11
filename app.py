@@ -99,18 +99,83 @@ shipping_costs = {
 # --- 4. Main Dashboard ---
 
 # Tab Layout
-tab1, tab2 = st.tabs(["Market Forecast", "Optimization Engine"])
-
+tab1, tab2, tab3 = st.tabs(["Historical Data", "Market Forecast", "Optimization Engine"])
 with tab1:
+    st.subheader("Historical Sales Data")
+    
+    all_stores_history = df_history['Store'].unique()
+    
+    # Multi-select for Stores
+    selected_stores_hist = st.multiselect(
+        "Filter by Store(s):",
+        options=all_stores_history,
+        default=all_stores_history,
+        key="history_filter"
+    )
+    
+    # Filter historical data based on selected stores
+    filtered_history = df_history[df_history['Store'].isin(selected_stores_hist)]
+
+    filtered_history['Date'] = pd.to_datetime(filtered_history['Date'])
+    latest_date = filtered_history['Date'].max()
+    start_date_30d = latest_date - pd.Timedelta(days=30)
+
+    # Filter to last 30 days
+    filtered_history = filtered_history[filtered_history['Date'] > start_date_30d]
+    
+    # If no stores selected, show warning
+    if filtered_history.empty:
+        st.warning("Please select at least one store to view the historical data.")
+    else:
+        # Visualization: Line Chart of Historical Sales
+        fig_hist = px.line(
+            filtered_history, 
+            x='Date', 
+            y='Sales', 
+            color='Store', 
+            markers=True,
+            title="Historical Sales Trends"
+        )
+        st.plotly_chart(fig_hist, use_container_width=True)
+        
+        st.divider()
+        
+        col_hist_view, col_hist_download = st.columns([4, 1])
+        
+        with col_hist_view:
+            st.markdown("### Detailed Data Table")            
+            st.dataframe(
+                filtered_history,
+                column_config={
+                    "Date": st.column_config.DateColumn("Date", format="DD/MM/YYYY"),
+                    "Sales": st.column_config.NumberColumn("Sales (Units)")
+                },
+                use_container_width=True,
+                hide_index=True 
+            )
+            
+        with col_hist_download:
+            # Download to CSV
+            csv_hist = filtered_history.to_csv(index=False).encode('utf-8')
+            st.download_button(
+                label="Download CSV",
+                data=csv_hist,
+                file_name="historical_sales_data.csv",
+                mime="text/csv"
+            )
+
+
+with tab2:
     st.subheader("30-Day Sales Forecast")
     
-    all_stores = df_forecast['Store'].unique()
+    all_stores_forcast = df_forecast['Store'].unique()
     
     # Multi-select for Stores
     selected_stores_view = st.multiselect(
         "Filter by Store(s):",
-        options=all_stores,
-        default=all_stores
+        options=all_stores_forcast,
+        default=all_stores_forcast,
+        key = "forecast_filter"
     )
     
     # Filter forecast data based on selected stores
@@ -160,7 +225,7 @@ with tab1:
             )
 
 
-with tab2:
+with tab3:
     st.subheader(f"Optimal Distribution Plan for: {selected_date}")
     
     # Action Button
