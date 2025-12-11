@@ -137,7 +137,7 @@ with tab2:
         # Detailed Table
         st.markdown("#### Detailed Allocation Plan")
         # Highlight stores with shortages
-        st.dataframe(allocation_plan.style.highlight_max(axis=0, subset=['Shortage_Qty'], color='#ffcccc'))
+        st.dataframe(allocation_plan.style.highlight_max(axis=0, subset=['Shortage_Qty'], color="#CE3D3D"))
         
         # Final Status Message
         if total_shortage > 0:
