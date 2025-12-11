@@ -27,6 +27,18 @@ def generate_sales_data(days=730):
             # Apply seasonality: Sales fluctuate based on the day of the week
             # Example: Weekend sales (Fri, Sat, Sun) receive a 20% boost
             weekday_factor = 1.2 if date.weekday() >= 5 else 0.9 
+            # Payday
+            if 25 <= date.day <= 31:
+                factor *= 1.3  
+            
+            # Double Days (1.1, 2.2, ... 12.12)
+            if date.day == date.month:
+                factor *= 2.5  # ยอดขายพุ่ง 2.5 เท่า!! (11.11 แรงมาก)
+                
+            # Black Friday
+            if date.month == 11 and 24 <= date.day <= 30 and date.weekday() == 4:
+                factor *= 3.0  
+
             noise = np.random.normal(0, 10)  # Add random fluctuation
             
             # Calculate daily demand and ensure it's non-negative
