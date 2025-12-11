@@ -101,16 +101,61 @@ tab1, tab2 = st.tabs(["Market Forecast", "Optimization Engine"])
 with tab1:
     st.subheader("30-Day Sales Forecast")
     
-    # Filter history for visualization context (Last 30 days)
-    # (Note: In a real scenario, you would merge history and forecast here)
+    all_stores = df_forecast['Store'].unique()
     
-    # Visualize Forecast
-    fig_line = px.line(df_forecast, x='Date', y='Predicted_Demand', color='Store', markers=True,
-                       title="Predicted Demand by Store")
-    st.plotly_chart(fig_line, use_container_width=True)
+    # Multi-select for Stores
+    selected_stores_view = st.multiselect(
+        "Filter by Store(s):",
+        options=all_stores,
+        default=all_stores
+    )
     
-    st.write("Forecast Data Table:")
-    st.dataframe(df_forecast)
+    # Filter forecast data based on selected stores
+    filtered_forecast = df_forecast[df_forecast['Store'].isin(selected_stores_view)]
+    
+    
+    # If no stores selected, show warning
+    if filtered_forecast.empty:
+        st.warning("Please select at least one store to view the forecast data.")
+    else:
+        # Visualization: Line Chart of Predicted Demand
+        fig_line = px.line(
+            filtered_forecast, 
+            x='Date', 
+            y='Predicted_Demand', 
+            color='Store', 
+            markers=True,
+            title="Predicted Demand Trends"
+        )
+        st.plotly_chart(fig_line, use_container_width=True)
+        
+        st.divider()
+        
+        
+        col_view, col_download = st.columns([4, 1])
+        
+        with col_view:
+            st.markdown("### Detailed Data Table")            
+            st.dataframe(
+                filtered_forecast,
+                column_config={
+                    "Date": st.column_config.DateColumn("Date", format="DD/MM/YYYY"),
+                    "Predicted_Demand": st.column_config.NumberColumn("Demand (Units)")
+                },
+                use_container_width=True,
+                hide_index=True 
+            )
+            
+        with col_download:
+            # Download to CSV
+            csv = filtered_forecast.to_csv(index=False).encode('utf-8')
+            st.download_button(
+                label="Download CSV",
+                data=csv,
+                file_name="forecast_data.csv",
+                mime="text/csv"
+            )
+
 
 with tab2:
     st.subheader(f"Optimal Distribution Plan for: {selected_date}")
