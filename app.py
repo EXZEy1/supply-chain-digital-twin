@@ -54,9 +54,14 @@ def format_date_label(date_str):
     except:
         return date_str
 
+
 # Select Target Date
 available_dates = df_forecast['Date'].unique()
-selected_date = st.sidebar.selectbox("Select Target Date:", available_dates)
+selected_date = st.sidebar.selectbox(
+    "Select Target Date:", 
+    available_dates,
+    format_func=format_date_label 
+)
 
 # Filter data for the selected date
 daily_demand = df_forecast[df_forecast['Date'] == selected_date].copy()
