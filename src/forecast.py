@@ -26,9 +26,14 @@ def train_forecast_model(df, store_name, days_ahead=30):
     # Prophet requires specific column names: 'ds' (Date) and 'y' (Target value)
     store_data = df[df['Store'] == store_name].rename(columns={'Date': 'ds', 'Sales': 'y'})
     
-    # Get special events in the data
-    unique_dates = pd.to_datetime(store_data['ds'].unique())
-    special_events_df = get_special_events(unique_dates)
+    # Define special events in the data
+    min_date = pd.to_datetime(store_data['ds'].min())
+    max_date = pd.to_datetime(store_data['ds'].max())
+    future_end_date = max_date + pd.Timedelta(days=365)
+
+
+    all_dates = pd.date_range(start=min_date, end=future_end_date, freq='D')
+    special_events_df = get_special_events(all_dates)
 
     # Initialize and train the Prophet model
     # daily_seasonality=True helps capture daily patterns automatically
@@ -78,6 +83,9 @@ if __name__ == "__main__":
     
     # Round predicted demand to nearest integer (can't sell 0.5 units)
     final_forecast['Predicted_Demand'] = final_forecast['Predicted_Demand'].round().astype(int)
+    
+    # Ensure no negative predictions
+    final_forecast['Predicted_Demand'] = final_forecast['Predicted_Demand'].apply(lambda x: max(0, x))
     
     # Save results
     output_path = os.path.join(data_dir, 'forecast_results.csv')
