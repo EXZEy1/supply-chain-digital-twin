@@ -10,7 +10,12 @@ def generate_sales_data(days=365):
     """
     np.random.seed(42)  # Ensure reproducibility
     stores = ['Store_A', 'Store_B', 'Store_C', 'Store_D', 'Store_E']
-    dates = [datetime(2024, 1, 1) + timedelta(days=i) for i in range(days)]
+    end_date = datetime.now()
+    start_date = end_date - timedelta(days=days)
+    
+    # Create a list of dates from (Today - 365) to Yesterday
+    dates = [start_date + timedelta(days=i) for i in range(days)]
+    
     
     data = []
     
