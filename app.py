@@ -103,31 +103,63 @@ shipping_costs = {
 # Tab Layout
 tab1, tab2, tab3 = st.tabs(["Historical Data", "Market Forecast", "Optimization Engine"])
 with tab1:
-    st.subheader("Last 30-Day Historical Sales Data")
+    st.subheader("30-Day Historical Sales Data")
+
+    # Ensure 'Date' column is datetime
+    df_history['Date'] = pd.to_datetime(df_history['Date'])
     
+    col_filter, col_date = st.columns(2)
+
     all_stores_history = df_history['Store'].unique()
+
     
-    # Multi-select for Stores
-    selected_stores_hist = st.multiselect(
-        "Filter by Store(s):",
-        options=all_stores_history,
-        default=all_stores_history,
-        key="history_filter"
-    )
+    with col_filter:
+        all_stores_history = df_history['Store'].unique()
+        selected_stores_hist = st.multiselect(
+            "Filter by Store(s):",
+            options=all_stores_history,
+            default=all_stores_history,
+            key="history_filter"
+        )
+        
+    with col_date:
+        # Find min and max dates in the historical data
+        min_date = df_history['Date'].min()
+        max_date = df_history['Date'].max()
+        
+        # Default to last 30 days
+        default_start = max_date - pd.Timedelta(days=30)
+        
+        # Range selector for dates
+        selected_date_range = st.date_input(
+            "Select Date Range:",
+            value=(default_start, max_date), # Default last 30 days
+            min_value=min_date,              
+            max_value=max_date,              
+            key="hist_date_range"
+        )
+
     
-    # Filter historical data based on selected stores
+
+
     filtered_history = df_history[df_history['Store'].isin(selected_stores_hist)]
-
-    filtered_history['Date'] = pd.to_datetime(filtered_history['Date'])
-    latest_date = filtered_history['Date'].max()
-    start_date_30d = latest_date - pd.Timedelta(days=30)
-
-    # Filter to last 30 days
-    filtered_history = filtered_history[filtered_history['Date'] > start_date_30d]
     
+    # Date Range Selector
+    if len(selected_date_range) == 2:
+        start_date, end_date = selected_date_range
+        # Filter data within selected date range
+        mask = (filtered_history['Date'] >= pd.to_datetime(start_date)) & (filtered_history['Date'] <= pd.to_datetime(end_date))
+        filtered_history = filtered_history.loc[mask]
+        
+        # Create chart title
+        chart_title = f"Sales Trend: {start_date.strftime('%d %b %Y')} - {end_date.strftime('%d %b %Y')}"
+    else:
+        chart_title = "Sales Trend (Please select end date)"
+    
+
     # If no stores selected, show warning
     if filtered_history.empty:
-        st.warning("Please select at least one store to view the historical data.")
+        st.warning("Please select at least one store to view the historical data or the data might be out of the 30-day range.")
     else:
         # Visualization: Line Chart of Historical Sales
         fig_hist = px.line(
@@ -136,7 +168,7 @@ with tab1:
             y='Sales', 
             color='Store', 
             markers=True,
-            title="Historical Sales Trends"
+            title=chart_title
         )
         st.plotly_chart(fig_hist, use_container_width=True)
         
