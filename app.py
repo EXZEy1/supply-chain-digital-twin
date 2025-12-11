@@ -99,7 +99,7 @@ shipping_costs = {
 tab1, tab2 = st.tabs(["Market Forecast", "Optimization Engine"])
 
 with tab1:
-    st.subheader("7-Day Sales Forecast")
+    st.subheader("30-Day Sales Forecast")
     
     # Filter history for visualization context (Last 30 days)
     # (Note: In a real scenario, you would merge history and forecast here)
