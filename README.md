@@ -14,11 +14,30 @@ The system operates on a fully automated daily cycle:
 4.  **Automated ETL (GitHub Actions):** Runs every day at 00:00 UTC to update the **Supabase (PostgreSQL)** database.
 5.  **Dashboard (Streamlit):** Visualizes trends and allows managers to simulate "What-if" scenarios (e.g., Stock shortages, Cost changes).
 
+## System Diagram
+```mermaid
+graph TD
+    A[Data Simulation<br/>src/data_gen.py] --> B[Demand Forecasting<br/>src/forecast.py (Prophet)]
+    B --> C[Forecast Results CSV]
+    C --> D[Daily ETL<br/>GitHub Actions]
+    D --> E[Supabase PostgreSQL]
+    E --> F[Streamlit Dashboard<br/>app.py]
+    F --> G[Optimization Engine<br/>src/optimize.py (PuLP)]
+    G --> H[Interactive Write-back<br/>Manual Overrides]
+    H --> E
+```
+
+## Dashboard Preview
+- **Historical Data Tab:** Multi-store filtering, rolling date window, and exportable table for the days of sales.
+- **Market Forecast Tab:** Prophet predictions with store toggles, confidence plotting, and CSV download for planners.
+- **Optimization Engine Tab:** Scenario sliders, LP-based baseline plan, editable allocation grid, and real-time KPI updates.
+
 ## Key Features
 * **AI-Powered Forecasting:** Automatically detects Thai holidays and special shopping events.
 * **Cost Optimization:** Uses Linear Programming (PuLP) to solve logistics problems.
 * **Cloud-Native:** Data is stored in a centralized Cloud Database (Supabase).
 * **Zero-Touch Automation:** The entire data pipeline runs automatically via CI/CD workflows.
+
 
 
 ## Live Demo
@@ -47,6 +66,34 @@ Reproduce the project locally in a few steps:
    ```
 5. **(Optional) Trigger ETL Workflow**
    * Update `.github/workflows/daily_etl.yml` secrets (`SUPABASE_URL`) and push to run the scheduled GitHub Actions pipeline.
+
+## Project Structure
+```
+supply-chain-digital-twin/
+├── app.py                  # Streamlit dashboard (analytics + optimizer UI)
+├── data/                   # Local CSV outputs (when running offline)
+├── src/
+│   ├── data_gen.py         # Synthetic sales generator with event factors
+│   ├── forecast.py         # Prophet training + inference pipeline
+│   ├── optimize.py         # PuLP linear program for allocation
+│   └── migrate_db.py       # Helper to seed Supabase tables
+├── .github/workflows/
+│   └── daily_etl.yml       # CI job that regenerates data/forecast + uploads to Supabase
+├── .streamlit/secrets.toml # Local secrets (not committed)
+└── README.md
+```
+
+## Data Flow
+1. **Simulate:** `src/data_gen.py` emits historical sales with event-driven spikes and pushes CSVs.
+2. **Forecast:** `src/forecast.py` feeds history into Prophet, outputting 30-day forecasts per store.
+3. **Sync:** GitHub Actions (`daily_etl.yml`) regenerates data/forecasts nightly and loads both tables into Supabase.
+4. **Analyze:** `app.py` pulls Supabase tables via `st.connection`, powering the dashboard tabs.
+5. **Optimize & Override:** `src/optimize.py` minimizes shipping + stockout cost; planners adjust allocations interactively and can export the final plan.
+
+## APIs & Integrations
+- **Supabase PostgreSQL:** Primary data store accessed securely through `.streamlit/secrets.toml`.
+- **GitHub Actions:** Schedules ETL + forecasting so Supabase stays fresh without manual intervention.
+- **Streamlit Cloud:** Hosts the live dashboard with the same secrets for consistent prod parity.
 
 ## How to Use the Dashboard
 1.  **Historical Analysis:** View past sales trends and event impacts.
