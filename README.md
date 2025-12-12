@@ -47,8 +47,8 @@ docker run --rm -p 8501:8501 -v "$PWD/.streamlit:/app/.streamlit" scdt
 ```
 (generate sample data if missing)
 ```bash
-    python src/data_gen.py
-    python src/forecast.py
+python src/data_gen.py
+python src/forecast.py
 ```
 offline mode (no Supabase): ensure data/*.csv exists or generate it, then
 ```bash
