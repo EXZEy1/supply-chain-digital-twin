@@ -1,10 +1,6 @@
-# 🏭 Supply Chain Digital Twin & Optimization Engine
+# Supply Chain Digital Twin & Optimization Engine
 
-![Streamlit](https://img.shields.io/badge/Frontend-Streamlit-red)
-![Prophet](https://img.shields.io/badge/AI-Prophet-blue)
-![PuLP](https://img.shields.io/badge/Optimization-Linear%20Programming-green)
-![Supabase](https://img.shields.io/badge/Database-Supabase-emerald)
-![GitHub Actions](https://img.shields.io/badge/Automation-GitHub%20Actions-black)
+
 
 ## Overview
 **Supply Chain Digital Twin** is an end-to-end data product designed to simulate, forecast, and optimize inventory distribution for a retail chain. It moves beyond static analysis by integrating **Automated ETL Pipelines** and **Cloud-based decision support systems**.
