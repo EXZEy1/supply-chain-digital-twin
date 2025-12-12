@@ -40,16 +40,22 @@ Pick the path that fits your setup.
 git clone https://github.com/<your-org>/supply-chain-digital-twin.git
 cd supply-chain-digital-twin
 docker build -t scdt .
+```
 # with Supabase secrets mapped in
+```bash
 docker run --rm -p 8501:8501 -v "$PWD/.streamlit:/app/.streamlit" scdt
-
-# offline mode (no Supabase): ensure data/*.csv exists or generate it, then
-docker run --rm -p 8501:8501 -e OFFLINE_MODE=1 \
-  -v "$PWD/data:/app/data" scdt
+```
 # (generate sample data if missing)
+```bash
     python src/data_gen.py
     python src/forecast.py
 ```
+# offline mode (no Supabase): ensure data/*.csv exists or generate it, then
+```bash
+docker run --rm -p 8501:8501 -e OFFLINE_MODE=1 \
+  -v "$PWD/data:/app/data" scdt
+```
+
 
 ### Option B) Local environment
 1. **Clone & Install**
