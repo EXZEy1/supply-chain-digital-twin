@@ -20,6 +20,34 @@ The system operates on a fully automated daily cycle:
 * **Cloud-Native:** Data is stored in a centralized Cloud Database (Supabase).
 * **Zero-Touch Automation:** The entire data pipeline runs automatically via CI/CD workflows.
 
+
+## Live Demo
+Experience the deployed app on Streamlit Cloud: [Supply Chain Digital Twin](https://supply-chain-digital-twin.streamlit.app)
+
+## Quick Start
+Reproduce the project locally in a few steps:
+
+1. **Clone & Install**
+   ```bash
+   git clone https://github.com/<your-org>/supply-chain-digital-twin.git
+   cd supply-chain-digital-twin
+   pip install -r requirements.txt
+   ```
+2. **Configure Secrets**
+   * Create `.streamlit/secrets.toml` and set Supabase credentials (URL + service role key) plus any API keys referenced in `app.py`.
+3. **Generate Data (Optional)**
+   ```bash
+   python src/data_gen.py
+   python src/forecast.py
+   ```
+   > Skip if you rely entirely on Supabase tables populated via the daily ETL.
+4. **Run the Dashboard**
+   ```bash
+   streamlit run app.py
+   ```
+5. **(Optional) Trigger ETL Workflow**
+   * Update `.github/workflows/daily_etl.yml` secrets (`SUPABASE_URL`) and push to run the scheduled GitHub Actions pipeline.
+
 ## How to Use the Dashboard
 1.  **Historical Analysis:** View past sales trends and event impacts.
 2.  **Market Forecast:** Check the AI predictions for the next 30 days.
@@ -33,4 +61,3 @@ The system operates on a fully automated daily cycle:
 * **Libraries:** Pandas, Prophet, PuLP, Streamlit, Plotly, SQLAlchemy
 * **Database:** PostgreSQL (Supabase)
 * **DevOps:** GitHub Actions, Docker (Optional)
-
