@@ -33,8 +33,28 @@ The system operates on a fully automated daily cycle:
 Experience the deployed app on Streamlit Cloud: [Supply Chain Digital Twin](https://supply-chain-digital-twin.streamlit.app)
 
 ## Quick Start
-Reproduce the project locally in a few steps:
+Pick the path that fits your setup.
 
+### Option A) Docker (recommended for reviewers)
+```bash
+git clone https://github.com/<your-org>/supply-chain-digital-twin.git
+cd supply-chain-digital-twin
+docker build -t scdt .
+# with Supabase secrets mapped in
+docker run --rm -p 8501:8501 -v "$PWD/.streamlit:/app/.streamlit" scdt
+
+# offline mode (no Supabase): ensure data/*.csv exists, then
+docker run --rm -p 8501:8501 -e OFFLINE_MODE=1 \
+  -v "$PWD/data:/app/data" scdt
+# (generate sample data if missing; easiest: run locally)
+python src/data_gen.py
+python src/forecast.py
+# หรือถ้า prophet ในคอนเทนเนอร์ใช้งานได้ ให้ใช้ docker ก็ได้:
+# docker run --rm -v "$PWD/data:/app/data" scdt python src/data_gen.py
+# docker run --rm -v "$PWD/data:/app/data" scdt python src/forecast.py
+```
+
+### Option B) Local environment
 1. **Clone & Install**
    ```bash
    git clone https://github.com/<your-org>/supply-chain-digital-twin.git
@@ -43,7 +63,7 @@ Reproduce the project locally in a few steps:
    ```
 2. **Configure Secrets**
    * Create `.streamlit/secrets.toml` and set Supabase credentials (URL + service role key) plus any API keys referenced in `app.py`.
-3. **Generate Data (Optional)**
+3. **Generate Data (Optional / for OFFLINE_MODE)**
    ```bash
    python src/data_gen.py
    python src/forecast.py
