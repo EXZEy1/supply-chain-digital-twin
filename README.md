@@ -49,11 +49,17 @@ Reproduce the project locally in a few steps:
    python src/forecast.py
    ```
    > Skip if you rely entirely on Supabase tables populated via the daily ETL.
-4. **Run the Dashboard**
+4. **Seed Your Own Supabase (Optional)**
+   ```bash
+   # requires SUPABASE_URL env (or .streamlit/secrets.toml) to be set
+   python src/migrate_db.py
+   ```
+   > Run this only if you want to upload the generated CSVs to your own Supabase instance. Will fail if `data/sales_history.csv` or `data/forecast_results.csv` are missing, or if `SUPABASE_URL`/`.streamlit/secrets.toml` is not configured; not meant to run from the Streamlit UI.
+5. **Run the Dashboard**
    ```bash
    streamlit run app.py
    ```
-5. **(Optional) Trigger ETL Workflow**
+6. **(Optional) Trigger ETL Workflow**
    * Update `.github/workflows/daily_etl.yml` secrets (`SUPABASE_URL`) and push to run the scheduled GitHub Actions pipeline.
 
 ## Project Structure

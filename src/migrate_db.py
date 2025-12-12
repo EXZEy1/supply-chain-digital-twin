@@ -5,7 +5,7 @@ import streamlit as st
 
 # Function to get DB connection URL
 def get_db_connection_url():
-    # 1. ลองดึงจาก st.secrets (สำหรับรันในเครื่อง Local)
+    # 1. Try to get from Streamlit Secrets
     try:
         return st.secrets["connections"]["supabase"]["url"]
     except (FileNotFoundError, KeyError):
