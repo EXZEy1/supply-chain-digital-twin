@@ -14,18 +14,7 @@ The system operates on a fully automated daily cycle:
 4.  **Automated ETL (GitHub Actions):** Runs every day at 00:00 UTC to update the **Supabase (PostgreSQL)** database.
 5.  **Dashboard (Streamlit):** Visualizes trends and allows managers to simulate "What-if" scenarios (e.g., Stock shortages, Cost changes).
 
-## System Diagram
-```mermaid
-graph TD
-    A[Data Simulation<br/>src/data_gen.py] --> B[Demand Forecasting<br/>src/forecast.py (Prophet)]
-    B --> C[Forecast Results CSV]
-    C --> D[Daily ETL<br/>GitHub Actions]
-    D --> E[Supabase PostgreSQL]
-    E --> F[Streamlit Dashboard<br/>app.py]
-    F --> G[Optimization Engine<br/>src/optimize.py (PuLP)]
-    G --> H[Interactive Write-back<br/>Manual Overrides]
-    H --> E
-```
+
 
 ## Dashboard Preview
 - **Historical Data Tab:** Multi-store filtering, rolling date window, and exportable table for the days of sales.
