@@ -103,7 +103,7 @@ shipping_costs = {
 # Tab Layout
 tab1, tab2, tab3 = st.tabs(["Historical Data", "Market Forecast", "Optimization Engine"])
 with tab1:
-    st.subheader("30-Day Historical Sales Data")
+    st.subheader("Historical Sales Data")
 
     # Ensure 'Date' column is datetime
     df_history['Date'] = pd.to_datetime(df_history['Date'])
