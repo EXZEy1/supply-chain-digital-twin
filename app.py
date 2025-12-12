@@ -3,6 +3,7 @@ import pandas as pd
 import plotly.express as px
 import os
 import sys
+from pathlib import Path
 
 # Add source directory to system path to import modules
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'src')))
@@ -19,9 +20,28 @@ st.set_page_config(
 st.title("Supply Chain Digital Twin & Optimization")
 st.markdown("### Intelligent Inventory Management & Scenario Simulation System")
 
+OFFLINE_MODE = os.getenv("OFFLINE_MODE", "").lower() in {"1", "true", "yes"}
+DATA_DIR = Path(__file__).parent / "data"
+
 # --- 2. Load Data ---
+def load_local_data():
+    try:
+        df_forecast = pd.read_csv(DATA_DIR / "forecast_results.csv", parse_dates=["Date"])
+        df_history = pd.read_csv(DATA_DIR / "sales_history.csv", parse_dates=["Date"])
+        return df_forecast, df_history
+    except FileNotFoundError as e:
+        st.error(f"Local CSV not found: {e}")
+    except Exception as e:
+        st.error(f"Error loading local CSV: {e}")
+    return None, None
+
+
 @st.cache_data(ttl=600) # cache data for 10 minutes
-def load_data():
+def load_data(offline_mode: bool):
+    if offline_mode:
+        st.info("OFFLINE_MODE enabled: loading from local CSVs in data/")
+        return load_local_data()
+
     try:
         # Setup connection to Supabase
         conn = st.connection("supabase", type="sql")
@@ -37,12 +57,12 @@ def load_data():
         return df_forecast, df_history
         
     except Exception as e:
-        st.error(f" Error loading data from database: {e}")
-        return None, None
+        st.warning(f"Supabase unavailable, falling back to local CSVs: {e}")
+        return load_local_data()
 
-df_forecast, df_history = load_data()
+df_forecast, df_history = load_data(OFFLINE_MODE)
 
-if df_forecast is None:
+if df_forecast is None or df_history is None:
     st.stop()
 
 # --- 3. Sidebar (Control Panel) ---
