@@ -1,0 +1,12 @@
+.git
+.env
+**/secrets.toml
+**/*.key
+__pycache__/
+*.pyc
+.mypy_cache/
+.DS_Store
+data/
+notebooks/
+*.csv
+*.parquet
